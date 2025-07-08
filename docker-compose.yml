@@ -1,22 +1,12 @@
 services:
-  kadmin:
-    build: kadmin/
-    image: ketzu/kadmin
-    container_name: kadmin
-    domainname: example.test
-    volumes:
-      - ./data:/data
-      - ./logs:/var/log/kerberos
-      - kdc-data:/var/lib/krb5kdc
   kdc:
     build: kdc/
     image: ketzu/krb5
     container_name: kdc
     domainname: example.test
+    environment:
+      - REALM=EXAMPLE.TEST
+      - KDC_PASSWORD=password
+      - PRINCIPALS=admin/admin:adminpass,testuser:testpass,service/host:randkey
     volumes:
       - ./data:/data
-      - ./logs:/var/log/kerberos
-      - kdc-data:/var/lib/krb5kdc
-
-volumes:
-  kdc-data:

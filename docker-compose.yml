@@ -1,7 +1,7 @@
 services:
   kdc:
     build: kdc/
-    image: ketzu/krb5
+    image: ketzu/krb5-test
     container_name: kdc
     domainname: example.test
     environment:

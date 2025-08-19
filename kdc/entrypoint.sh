@@ -30,23 +30,16 @@ echo "Creating principals and keytabs..."
 for principal in "${PRINCIPAL_ARRAY[@]}"; do
     IFS=':' read -r principal_name password <<< "$principal"
     if [ "$password" = "randkey" ]; then
-        if kadmin.local -q "getprinc $principal_name@$REALM" >/dev/null 2>&1; then
-            echo "Principal $principal_name@$REALM already exists"
-        else
-            echo "Creating service principal: $principal_name@$REALM"
-            kadmin.local -q "addprinc -randkey $principal_name@$REALM"
-        fi
+        echo "Creating service principal: $principal_name@$REALM"
+        kadmin.local -q "addprinc -randkey $principal_name@$REALM"
+
         # Generate keytab
         keytab_name=$(echo "$principal_name" | sed 's/\//_/g')
         kadmin.local -q "ktadd -k /data/${keytab_name}.keytab $principal_name@$REALM"
         echo "Keytab created: /data/${keytab_name}.keytab"
     else
-        if kadmin.local -q "getprinc $principal_name@$REALM" >/dev/null 2>&1; then
-            echo "Principal $principal_name@$REALM already exists"
-        else
-            echo "Creating user principal: $principal_name@$REALM"
-            kadmin.local -q "addprinc -pw $password $principal_name@$REALM"
-        fi
+        echo "Creating user principal: $principal_name@$REALM"
+        kadmin.local -q "addprinc -pw $password $principal_name@$REALM"
     fi
 done
 echo "Principal creation completed."
